@@ -280,4 +280,43 @@ nano_n50 <- function(inputfile, quality = 0){
 }
 
 
+#' Read length direct RNA seq vs expected transcript length
+#' Takes in the `sequencing_summary` file of albacore as input and a gff3 annotation file and returns a comparison of read length vs transcript length
+#' @param inputfile Filepath to sequencing_summary.txt output of albacore
+#' @param quality Mean quality filter option for every read
+#' @param gff_file path to gff3 annotation file
+#' @return comparison of read_length vs transcript length
+#' @export
+#' @import dplyr data.table
+nano_seq_vs_exon <- function(inputfile, gff_file, quality = 0){
+    cds_annotation <- read.table(file = gff_file,
+                               sep = "\t", header = FALSE, stringsAsFactors = F, fill = F, quote = "",
+                               col.names = c("seqid", "source", "type", "start", "end", "score", "strand", "phase", "attributes")) %>%
+    dplyr::filter(type == "exon") %>%
+    distinct(start,.keep_all = T) %>%
+    mutate(length = as.numeric(abs(end-start))) %>%
+    dplyr::select(length)
+
+    return(fread(input = inputfile) %>%
+           as.data.table() %>%
+           ggplot() +
+                geom_density(aes(x=sequence_length_template,y = ..density..),
+                             col = viridis_pal()(10)[4],
+                             size = 1,
+                             fill = viridis_pal(alpha = 0.5)(10)[4]) +
+                geom_density(data = cds_annotation,
+                             aes(x=length,y = ..density..),
+                             col = viridis_pal()(10)[7],
+                             size = 1,
+                             fill = viridis_pal(alpha = 0.5)(10)[7]) +
+                scale_x_log10(limits = c(100,10000)) +
+                theme_light() +
+                geom_density(aes(y = ..density..*15*n),col = viridis_pal()(10)[1]) +
+                xlab("Length") +
+                ylab("Density") +
+                ggtitle("Histogram of read lengths exon (green) vs MinION reads (blue)") +
+                guides(fill = F) +
+                scale_fill_viridis())
+
+}
 
