@@ -287,7 +287,7 @@ nano_n50 <- function(inputfile, quality = 0){
 #' @param gff_file path to gff3 annotation file
 #' @return comparison of read_length vs transcript length
 #' @export
-#' @import dplyr data.table
+#' @import dplyr data.table ggplot2 viridis
 nano_seq_vs_exon <- function(inputfile, gff_file, quality = 0){
     cds_annotation <- read.table(file = gff_file,
                                sep = "\t", header = FALSE, stringsAsFactors = F, fill = F, quote = "",
@@ -311,7 +311,6 @@ nano_seq_vs_exon <- function(inputfile, gff_file, quality = 0){
                              fill = viridis_pal(alpha = 0.5)(10)[7]) +
                 scale_x_log10(limits = c(100,10000)) +
                 theme_light() +
-                geom_density(aes(y = ..density..*15*n),col = viridis_pal()(10)[1]) +
                 xlab("Length") +
                 ylab("Density") +
                 ggtitle("Histogram of read lengths exon (green) vs MinION reads (blue)") +
