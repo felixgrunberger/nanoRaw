@@ -23,12 +23,12 @@ options(warn=-1)
 #' @export
 #' @import dplyr data.table seqinr
 nano_seq_cov <- function(inputfile, genome_fasta, quality = 0){
-  fasta <- read.fasta(file = genome_fasta)
+  fasta <- seqinr::read.fasta(file = genome_fasta)
   names(fasta) <- "genome"
   return(fread(input = inputfile) %>%
            as.data.table() %>%
            dplyr::filter(mean_qscore_template >= quality) %>%
-           summarise(sum(sequence_length_template))/length(fasta$genome)
+           summarise(sum(sequence_length_template)/length(fasta$genome))
   )
 }
 
@@ -282,8 +282,6 @@ nano_n50 <- function(inputfile, quality = 0){
            head(1)
   )
 }
-
-
 
 
 
