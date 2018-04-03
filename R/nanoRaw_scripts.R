@@ -25,10 +25,14 @@ options(warn=-1)
 nano_seq_cov <- function(inputfile, genome_fasta, quality = 0){
   fasta <- seqinr::read.fasta(file = genome_fasta)
   names(fasta) <- "genome"
-  return(fread(input = inputfile) %>%
+  table <- fread(input = inputfile) %>%
            as.data.table() %>%
            dplyr::filter(mean_qscore_template >= quality) %>%
-           summarise(sum(sequence_length_template)/length(fasta$genome)))
+           summarise(sum(sequence_length_template)/length(fasta$genome)) %>%
+           t()
+  colnames(table) <- ""
+  rownames(table) <- "genome coverage (x-fold)"
+  return(print(table))
 }
 
 
@@ -247,7 +251,7 @@ nano_readsum <- function(inputfile, number = 5){
 #' @export
 #' @import dplyr data.table
 nano_stats <- function(inputfile, quality = 0){
-  return(fread(input = inputfile) %>%
+  table <- fread(input = inputfile) %>%
            as.data.table() %>%
            dplyr::filter(mean_qscore_template >= quality) %>%
            mutate("number of reads"    = length(filename),
@@ -256,7 +260,9 @@ nano_stats <- function(inputfile, quality = 0){
                   "mean read length"   = mean(sequence_length_template)) %>%
            dplyr::select("number of reads", "total bases", "median read length", "mean read length") %>%
            head(1) %>%
-           t())
+           t()
+  colnames(table) <- ""
+    return(print(table))
 }
 
 
@@ -268,7 +274,7 @@ nano_stats <- function(inputfile, quality = 0){
 #' @export
 #' @import dplyr data.table
 nano_n50 <- function(inputfile, quality = 0){
-  return(fread(input = inputfile) %>%
+  table <- fread(input = inputfile) %>%
            as.data.table() %>%
            dplyr::filter(mean_qscore_template >= quality) %>%
            dplyr::arrange(desc(sequence_length_template)) %>%
@@ -276,7 +282,10 @@ nano_n50 <- function(inputfile, quality = 0){
            dplyr::select(sequence_length_template, cumulative) %>%
            mutate(N50 = sequence_length_template[which.min(abs(cumulative - max(cumulative)/2))]) %>%
            dplyr::select(N50) %>%
-           head(1))
+           head(1) %>%
+           t()
+  colnames(table) <- ""
+  return(print(table))
 }
 
 
