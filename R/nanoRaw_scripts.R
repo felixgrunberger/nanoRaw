@@ -14,6 +14,25 @@
 # supress warnings
 options(warn=-1)
 
+#' Genome coverage of nanopore run
+#' Takes in the `sequencing_summary` file of albacore and the genome fasta as input and returns the genome coverage
+#' @param inputfile Filepath to sequencing_summary.txt output of albacore
+#' @param quality Mean quality filter option for every read
+#' @param genome_fasta path to genome fasta
+#' @return Genome coverage = Nr of bases sequenced/genome length
+#' @export
+#' @import dplyr data.table seqinr
+nano_seq_cov <- function(inputfile, genome_fasta, quality = 0){
+  fasta <- read.fasta(file = genome_fasta)
+  names(fasta) <- "genome"
+  return(fread(input = inputfile) %>%
+           as.data.table() %>%
+           dplyr::filter(mean_qscore_template >= quality) %>%
+           summarise(sum(sequence_length_template))/length(fasta$genome)
+  )
+}
+
+
 #' Histogram of read lengths of nanopore reads
 #' Takes in the `sequencing_summary` file of albacore as input and visualizes the readlength distribution as a histogram using ggplot2
 #' @param inputfile Filepath to sequencing_summary.txt output of albacore
@@ -265,22 +284,6 @@ nano_n50 <- function(inputfile, quality = 0){
 }
 
 
-#' Genome coverage of nanopore run
-#' Takes in the `sequencing_summary` file of albacore and the genome fasta as input and returns the genome coverage
-#' @param inputfile Filepath to sequencing_summary.txt output of albacore
-#' @param quality Mean quality filter option for every read
-#' @param genome_fasta path to genome fasta
-#' @return Genome coverage = Nr of bases sequenced/genome length
-#' @export
-#' @import dplyr data.table seqinr
-nano_seq_cov <- function(inputfile, genome_fasta, quality = 0){
-  fasta <- read.fasta(file = genome_fasta)
-  names(fasta) <- "genome"
-  return(fread(input = inputfile) %>%
-           as.data.table() %>%
-           dplyr::filter(mean_qscore_template >= quality) %>%
-           summarise(sum(sequence_length_template))/length(fasta$genome)
-  )
-}
+
 
 
