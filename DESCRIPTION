@@ -1,4 +1,4 @@
-Package: nanoR
+Package: nanoRaw
 Title: Nanopore sequencing summary visualization in R
 Version: 0.0.0.1
 Authors@R: person("Felix", "Grünberger", email = "felix.gruenberger@web.de", role = c("aut", "cre"))
