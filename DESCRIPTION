@@ -1,0 +1,11 @@
+Package: nanoR
+Title: Nanopore sequencing summary visualization in R
+Version: 0.0.0.1
+Authors@R: person("Felix", "Grünberger", email = "felix.gruenberger@web.de", role = c("aut", "cre"))
+Description: This package takes the albacore `sequencing summary`as an input and visualizes it
+Depends: R (>= 3.4.2)
+License: MIT
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.0.1
+Imports: ggplot2
