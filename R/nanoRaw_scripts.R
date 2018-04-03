@@ -28,8 +28,7 @@ nano_seq_cov <- function(inputfile, genome_fasta, quality = 0){
   return(fread(input = inputfile) %>%
            as.data.table() %>%
            dplyr::filter(mean_qscore_template >= quality) %>%
-           summarise(sum(sequence_length_template)/length(fasta$genome))
-  )
+           summarise(sum(sequence_length_template)/length(fasta$genome)))
 }
 
 
@@ -235,8 +234,7 @@ nano_readsum <- function(inputfile, number = 5){
       mutate(position = 1:number,
              readlength = sequence_length_template,
              basecall_quality = mean_qscore_template) %>%
-      dplyr::select(position, basecall_quality,readlength)
-  )
+      dplyr::select(position, basecall_quality,readlength))
 }
 
 
@@ -258,8 +256,7 @@ nano_stats <- function(inputfile, quality = 0){
                   "mean read length"   = mean(sequence_length_template)) %>%
            dplyr::select("number of reads", "total bases", "median read length", "mean read length") %>%
            head(1) %>%
-           t()
-  )
+           t())
 }
 
 
@@ -279,8 +276,7 @@ nano_n50 <- function(inputfile, quality = 0){
            dplyr::select(sequence_length_template, cumulative) %>%
            mutate(N50 = sequence_length_template[which.min(abs(cumulative - max(cumulative)/2))]) %>%
            dplyr::select(N50) %>%
-           head(1)
-  )
+           head(1))
 }
 
 
