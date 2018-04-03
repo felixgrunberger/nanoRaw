@@ -40,7 +40,7 @@ nano_seq_cov <- function(inputfile, genome_fasta, quality = 0){
 #' @return Histogram of read lengths
 #' @export
 #' @import ggplot2 dplyr viridis data.table
-nano_histlength <- function(inputfile, viridiscolor = "viridis", transformation = ""){
+nano_histlength2 <- function(inputfile, viridiscolor = "viridis", transformation = ""){
   if (transformation == ""){
     return(fread(input = inputfile) %>%
       as.data.table() %>%
