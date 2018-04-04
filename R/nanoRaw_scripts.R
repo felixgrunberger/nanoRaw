@@ -31,7 +31,7 @@ nano_seq_cov <- function(inputfile, genome_fasta, quality = 0){
            summarise(sum(sequence_length_template)/length(fasta$genome)) %>%
            t()
   colnames(table) <- ""
-  rownames(table) <- "genome coverage (x-fold)"
+  rownames(table) <- "genome coverage (x-fold):"
   return(print(table))
 }
 
@@ -328,3 +328,21 @@ nano_seq_vs_exon <- function(inputfile, gff_file, quality = 0){
 
 }
 
+#' Report n longest reads of a sequencing run
+#' Takes in the `sequencing_summary` file of albacore as input and give you the 'n' longest sequences
+#' @param inputfile Filepath to sequencing_summary.txt output of albacore
+#' @param quality Mean quality filter option for every read
+#' @param n longest reads
+#' @return basic nanopore run statistics
+#' @export
+#' @import dplyr data.table
+nano_longest <- function(inputfile, quality = 0, n = 5){
+  return(fread(input = inputfile) %>%
+    as.data.table() %>%
+    dplyr::filter(mean_qscore_template >= quality) %>%
+    arrange(desc(sequence_length_template)) %>%
+    mutate("length"    = sequence_length_template,
+           "quality"        = mean_qscore_template) %>%
+    dplyr::select("length", "quality") %>%
+    head(n))
+}
